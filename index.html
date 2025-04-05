@@ -5,31 +5,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Production In Process</title>
   <style>
+    :root {
+      --neon-cyan: #00ffe0;
+      --neon-purple: #a600ff;
+      --background-dark: #0a0a1a;
+    }
+
     body {
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #1e1e2f, #2e2e3f);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--background-dark);
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      overflow: hidden;
     }
 
     .container {
+      position: relative;
       text-align: center;
+      z-index: 2;
+    }
+
+    .gear-system {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 30px;
     }
 
     .gear {
+      position: absolute;
+      border-style: solid;
+      border-radius: 50%;
+      animation-timing-function: linear;
+      filter: drop-shadow(0 0 5px var(--neon-cyan));
+    }
+
+    .gear-main {
+      width: 120px;
+      height: 120px;
+      border-width: 15px;
+      border-color: #333 #333 #333 var(--neon-cyan);
+      top: 30px;
+      left: 30px;
+      animation: spin 3s linear infinite;
+    }
+
+    .gear-secondary {
       width: 80px;
       height: 80px;
-      border: 10px solid #ccc;
-      border-top: 10px solid #00ffe0;
-      border-radius: 50%;
+      border-width: 12px;
+      border-color: var(--neon-purple) #333 #333 #333;
+      top: 0;
+      left: 100px;
+      animation: spinReverse 2s linear infinite;
+    }
+
+    .gear-tertiary {
+      width: 60px;
+      height: 60px;
+      border-width: 10px;
+      border-color: #333 #333 var(--neon-cyan) #333;
+      top: 120px;
+      left: 0;
       animation: spin 1.5s linear infinite;
-      margin: 0 auto 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      background: linear-gradient(45deg, #00ffe0, #0099ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(0, 255, 224, 0.3);
+      animation: textGlow 2s ease-in-out infinite;
+    }
+
+    .status-message {
+      font-size: 1.2rem;
+      color: #aaa;
+      min-height: 24px;
+      margin: 15px 0;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 400px;
+      height: 15px;
+      background: #1a1a2f;
+      border-radius: 8px;
+      margin: 30px auto;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 255, 224, 0.2);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00ffe0, #0099ff);
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255,255,255,0.2), 
+        transparent);
+      animation: progressGlow 2s infinite;
+    }
+
+    .percentage {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #fff;
+      font-weight: bold;
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, var(--neon-cyan) 20%, transparent 100%);
+      opacity: 0.3;
+      animation: float linear infinite;
     }
 
     @keyframes spin {
@@ -37,46 +157,86 @@
       100% { transform: rotate(360deg); }
     }
 
-    h1 {
-      font-size: 2rem;
-      margin: 10px 0;
+    @keyframes spinReverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
     }
 
-    p {
-      font-size: 1.2rem;
-      color: #aaa;
+    @keyframes textGlow {
+      0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 224, 0.3); }
+      50% { text-shadow: 0 0 20px rgba(0, 255, 224, 0.6), 0 0 30px rgba(0, 255, 224, 0.4); }
     }
 
-    .status-bar {
-      margin-top: 30px;
-      width: 300px;
-      height: 10px;
-      background: #444;
-      border-radius: 5px;
-      overflow: hidden;
+    @keyframes progressGlow {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
-    .status-fill {
-      height: 100%;
-      width: 0%;
-      background: #00ffe0;
-      animation: fillBar 5s ease-in-out infinite;
-    }
-
-    @keyframes fillBar {
-      0%, 100% { width: 0%; }
-      50% { width: 100%; }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); opacity: 0; }
+      50% { opacity: 0.4; }
+      100% { transform: translateY(-100vh) translateX(50vw); opacity: 0; }
     }
   </style>
 </head>
 <body>
+  <div class="particles" id="particles"></div>
   <div class="container">
-    <div class="gear"></div>
-    <h1>Production in Process</h1>
-    <p>Middleware active. Please wait while we handle your request.</p>
-    <div class="status-bar">
-      <div class="status-fill"></div>
+    <div class="gear-system">
+      <div class="gear gear-main"></div>
+      <div class="gear gear-secondary"></div>
+      <div class="gear gear-tertiary"></div>
+    </div>
+    <h1>Production In Process</h1>
+    <div class="status-message" id="statusMessage">Initializing systems...</div>
+    <div class="progress-container">
+      <div class="progress-fill" id="progressFill">
+        <div class="percentage" id="percentage">0%</div>
+      </div>
     </div>
   </div>
+
+  <script>
+    // Progress simulation
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+      progress = Math.min(progress + Math.random() * 3, 100);
+      document.getElementById('progressFill').style.width = `${progress}%`;
+      document.getElementById('percentage').textContent = `${Math.floor(progress)}%`;
+      
+      if (progress >= 100) {
+        clearInterval(progressInterval);
+      }
+    }, 200);
+
+    // Status messages
+    const messages = [
+      "Optimizing modules...",
+      "Compiling assets...",
+      "Initializing middleware...",
+      "Verifying security protocols...",
+      "Loading dependencies...",
+      "Finalizing setup..."
+    ];
+    let messageIndex = 0;
+    setInterval(() => {
+      document.getElementById('statusMessage').textContent = messages[messageIndex];
+      messageIndex = (messageIndex + 1) % messages.length;
+    }, 3000);
+
+    // Generate particles
+    const particles = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.width = `${Math.random() * 4 + 2}px`;
+      particle.style.height = particle.style.width;
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.animationDuration = `${Math.random() * 3 + 5}s`;
+      particle.style.animationDelay = `${Math.random() * 5}s`;
+      particles.appendChild(particle);
+    }
+  </script>
 </body>
 </html>
