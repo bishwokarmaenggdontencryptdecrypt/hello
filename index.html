@@ -1,267 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Production Monitoring</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Production In Process</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #1e1e2f, #2e2e3f);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
 
-        body {
-            background: #1a1a1a;
-            color: #fff;
-            overflow-x: hidden;
-        }
+    .container {
+      text-align: center;
+    }
 
-        .navbar {
-            background: #2d2d2d;
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+    .gear {
+      width: 80px;
+      height: 80px;
+      border: 10px solid #ccc;
+      border-top: 10px solid #00ffe0;
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      margin: 0 auto 20px;
+    }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #00ff88;
-        }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-        .nav-links a {
-            color: #fff;
-            text-decoration: none;
-            margin-left: 2rem;
-            transition: color 0.3s;
-        }
+    h1 {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
 
-        .nav-links a:hover {
-            color: #00ff88;
-        }
+    p {
+      font-size: 1.2rem;
+      color: #aaa;
+    }
 
-        .container {
-            padding: 4rem 5%;
-        }
+    .status-bar {
+      margin-top: 30px;
+      width: 300px;
+      height: 10px;
+      background: #444;
+      border-radius: 5px;
+      overflow: hidden;
+    }
 
-        .status-overview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
+    .status-fill {
+      height: 100%;
+      width: 0%;
+      background: #00ffe0;
+      animation: fillBar 5s ease-in-out infinite;
+    }
 
-        .status-card {
-            background: #2d2d2d;
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            transform: translateY(0);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .status-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 25px rgba(0,255,136,0.1);
-        }
-
-        .status-card i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #00ff88;
-        }
-
-        .production-stages {
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-            position: relative;
-        }
-
-        .stage {
-            opacity: 0;
-            transform: translateX(-100px);
-            transition: all 0.8s ease-out;
-            background: #2d2d2d;
-            padding: 2rem;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .stage:nth-child(even) {
-            transform: translateX(100px);
-            flex-direction: row-reverse;
-        }
-
-        .stage.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .stage-icon {
-            font-size: 3rem;
-            color: #00ff88;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #333;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            margin: 2rem 0;
-        }
-
-        .progress-fill {
-            width: 75%;
-            height: 100%;
-            background: linear-gradient(90deg, #00ff88, #00ccff);
-            border-radius: 10px;
-            position: relative;
-            transition: width 1s ease-in-out;
-        }
-
-        .progress-text {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fff;
-            font-weight: bold;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .alert {
-            background: #ff4444;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 2rem 0;
-            animation: pulse 1.5s infinite;
-        }
-
-        @media (max-width: 768px) {
-            .stage {
-                flex-direction: column;
-                text-align: center;
-            }
-            .stage:nth-child(even) {
-                flex-direction: column;
-            }
-        }
-    </style>
+    @keyframes fillBar {
+      0%, 100% { width: 0%; }
+      50% { width: 100%; }
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">PROD<span style="color: #fff;">TRACK</span></div>
-        <div class="nav-links">
-            <a href="#overview">Overview</a>
-            <a href="#stages">Stages</a>
-            <a href="#analytics">Analytics</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="status-overview">
-            <div class="status-card">
-                <i class="fas fa-cogs"></i>
-                <h3>Production Progress</h3>
-                <div class="progress-bar">
-                    <div class="progress-fill">
-                        <span class="progress-text">75%</span>
-                    </div>
-                </div>
-            </div>
-            <div class="status-card">
-                <i class="fas fa-bolt"></i>
-                <h3>Efficiency</h3>
-                <p>88%</p>
-            </div>
-            <div class="status-card">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3>Active Alerts</h3>
-                <p>3 Issues</p>
-            </div>
-        </div>
-
-        <div class="alert">
-            <i class="fas fa-exclamation-circle"></i> Alert: Machine #4 requires maintenance
-        </div>
-
-        <div class="production-stages" id="stages">
-            <div class="stage">
-                <i class="fas fa-cube stage-icon"></i>
-                <div>
-                    <h2>Raw Material Processing</h2>
-                    <p>Initial preparation and quality check of raw materials</p>
-                </div>
-            </div>
-            <div class="stage">
-                <i class="fas fa-cogs stage-icon"></i>
-                <div>
-                    <h2>Assembly Line</h2>
-                    <p>Automated assembly process with quality control checkpoints</p>
-                </div>
-            </div>
-            <div class="stage">
-                <i class="fas fa-paint-brush stage-icon"></i>
-                <div>
-                    <h2>Finishing & Coating</h2>
-                    <p>Surface treatment and protective coating application</p>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="gear"></div>
+    <h1>Production in Process</h1>
+    <p>Middleware active. Please wait while we handle your request.</p>
+    <div class="status-bar">
+      <div class="status-fill"></div>
     </div>
-
-    <script>
-        // Scroll animation trigger
-        const stages = document.querySelectorAll('.stage');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        stages.forEach(stage => observer.observe(stage));
-
-        // Progress bar animation
-        let width = 0;
-        const progressFill = document.querySelector('.progress-fill');
-        const progressText = document.querySelector('.progress-text');
-        const interval = setInterval(() => {
-            if (width >= 75) {
-                clearInterval(interval);
-            } else {
-                width++;
-                progressFill.style.width = width + '%';
-                progressText.textContent = width + '%';
-            }
-        }, 50);
-
-        // Hover effects
-        document.querySelectorAll('.status-card').forEach(card => {
-            card.addEventListener('mouseover', () => {
-                card.style.transform = 'translateY(-10px)';
-            });
-            card.addEventListener('mouseout', () => {
-                card.style.transform = 'translateY(0)';
-            });
-        });
-    </script>
+  </div>
 </body>
 </html>
