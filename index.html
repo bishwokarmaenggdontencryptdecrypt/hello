@@ -6,237 +6,715 @@
   <title>Production In Process</title>
   <style>
     :root {
-      --neon-cyan: #00ffe0;
-      --neon-purple: #a600ff;
-      --background-dark: #0a0a1a;
+      --primary: #00ffe0;
+      --primary-dark: #00c8b0;
+      --secondary: #7c4dff;
+      --background-dark: #1e1e2f;
+      --background-light: #2e2e3f;
+      --text-light: #ffffff;
+      --text-muted: #aaaaaa;
     }
-
+    
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--background-dark);
-      color: #fff;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--background-dark), var(--background-light));
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 2rem;
       min-height: 100vh;
-      overflow: hidden;
-    }
-
-    .container {
       position: relative;
-      text-align: center;
-      z-index: 2;
+      z-index: 1;
     }
-
-    .gear-system {
+    
+    /* Animated background */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.1;
+    }
+    
+    .bg-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(var(--text-light) 1px, transparent 1px), 
+                        linear-gradient(90deg, var(--text-light) 1px, transparent 1px);
+      background-size: 40px 40px;
+      perspective: 1000px;
+      transform-style: preserve-3d;
+      animation: gridMove 20s linear infinite;
+    }
+    
+    @keyframes gridMove {
+      0% {
+        transform: translateZ(0) translateY(0);
+      }
+      100% {
+        transform: translateZ(0) translateY(40px);
+      }
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin: 1rem 0;
+      position: relative;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    h1:after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 3px;
+      bottom: -10px;
+      left: 20%;
+      background: linear-gradient(to right, transparent, var(--primary), transparent);
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+      font-weight: 300;
+    }
+    
+    /* Gear system animation */
+    .gears-container {
       position: relative;
       width: 200px;
       height: 200px;
-      margin: 0 auto 30px;
+      margin: 0 auto 2rem;
     }
-
+    
     .gear {
       position: absolute;
-      border-style: solid;
       border-radius: 50%;
-      animation-timing-function: linear;
-      filter: drop-shadow(0 0 5px var(--neon-cyan));
+      border: 3px dashed var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(0, 255, 224, 0.3);
     }
-
-    .gear-main {
-      width: 120px;
-      height: 120px;
-      border-width: 15px;
-      border-color: #333 #333 #333 var(--neon-cyan);
-      top: 30px;
-      left: 30px;
-      animation: spin 3s linear infinite;
+    
+    .gear:before {
+      content: '';
+      position: absolute;
+      width: 20%;
+      height: 20%;
+      background-color: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary);
     }
-
-    .gear-secondary {
-      width: 80px;
-      height: 80px;
-      border-width: 12px;
-      border-color: var(--neon-purple) #333 #333 #333;
-      top: 0;
-      left: 100px;
-      animation: spinReverse 2s linear infinite;
-    }
-
-    .gear-tertiary {
+    
+    .gear-center {
       width: 60px;
       height: 60px;
-      border-width: 10px;
-      border-color: #333 #333 var(--neon-cyan) #333;
-      top: 120px;
-      left: 0;
-      animation: spin 1.5s linear infinite;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      animation: spin 3s linear infinite;
     }
-
-    h1 {
-      font-size: 2.5rem;
-      margin: 20px 0;
-      background: linear-gradient(45deg, #00ffe0, #0099ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 10px rgba(0, 255, 224, 0.3);
-      animation: textGlow 2s ease-in-out infinite;
+    
+    .gear-top-right {
+      width: 80px;
+      height: 80px;
+      top: 20%;
+      right: 20%;
+      animation: spin-reverse 4s linear infinite;
     }
-
-    .status-message {
-      font-size: 1.2rem;
-      color: #aaa;
-      min-height: 24px;
-      margin: 15px 0;
+    
+    .gear-bottom-left {
+      width: 100px;
+      height: 100px;
+      bottom: 10%;
+      left: 10%;
+      animation: spin-reverse 5s linear infinite;
     }
-
-    .progress-container {
-      position: relative;
-      width: 400px;
-      height: 15px;
-      background: #1a1a2f;
-      border-radius: 8px;
-      margin: 30px auto;
+    
+    .gear-inner {
+      position: absolute;
+      width: 75%;
+      height: 75%;
+      border: 2px solid var(--primary-dark);
+      border-radius: 50%;
+    }
+    
+    .gear-spoke {
+      position: absolute;
+      width: 100%;
+      height: 6px;
+      background-color: var(--primary);
+      transform-origin: center;
+    }
+    
+    .gear-center .gear-spoke {
+      width: 90%;
+    }
+    
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @keyframes spin-reverse {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
+    }
+    
+    /* Progress indicators */
+    .status-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 2rem 0;
+    }
+    
+    .status-item {
+      margin-bottom: 1.5rem;
+    }
+    
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-label {
+      font-weight: 500;
+      color: var(--text-light);
+    }
+    
+    .status-percentage {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    
+    .status-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
       overflow: hidden;
-      box-shadow: 0 0 10px rgba(0, 255, 224, 0.2);
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #00ffe0, #0099ff);
-      transition: width 0.3s ease;
       position: relative;
     }
-
-    .progress-fill::after {
+    
+    .status-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+      border-radius: 4px;
+      position: relative;
+      width: 0%;
+    }
+    
+    .status-fill:after {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255,255,255,0.2), 
-        transparent);
-      animation: progressGlow 2s infinite;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      animation: shimmer 2s infinite;
     }
-
-    .percentage {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #fff;
-      font-weight: bold;
-      text-shadow: 0 0 5px var(--neon-cyan);
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
-
+    
+    /* Particles animation */
     .particles {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
-      z-index: 1;
+      overflow: hidden;
+      z-index: 0;
     }
-
+    
     .particle {
       position: absolute;
-      background: radial-gradient(circle, var(--neon-cyan) 20%, transparent 100%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--primary);
       opacity: 0.3;
-      animation: float linear infinite;
+      z-index: -1;
     }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    
+    /* Console logs section */
+    .console-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-left: 3px solid var(--primary);
+      font-family: 'Courier New', monospace;
+      height: 150px;
+      overflow-y: auto;
+      position: relative;
     }
-
-    @keyframes spinReverse {
-      0% { transform: rotate(360deg); }
-      100% { transform: rotate(0deg); }
+    
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
     }
-
-    @keyframes textGlow {
-      0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 224, 0.3); }
-      50% { text-shadow: 0 0 20px rgba(0, 255, 224, 0.6), 0 0 30px rgba(0, 255, 224, 0.4); }
+    
+    .console-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
     }
-
-    @keyframes progressGlow {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
+    
+    .console-actions span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 5px;
+      cursor: pointer;
     }
-
-    @keyframes float {
-      0% { transform: translateY(0) translateX(0); opacity: 0; }
-      50% { opacity: 0.4; }
-      100% { transform: translateY(-100vh) translateX(50vw); opacity: 0; }
+    
+    .console-actions span:nth-child(1) {
+      background-color: #ff5f56;
+    }
+    
+    .console-actions span:nth-child(2) {
+      background-color: #ffbd2e;
+    }
+    
+    .console-actions span:nth-child(3) {
+      background-color: #27c93f;
+    }
+    
+    .console-content {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    
+    .log-entry {
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.3s forwards;
+    }
+    
+    .log-timestamp {
+      color: #888;
+      margin-right: 8px;
+    }
+    
+    .log-type {
+      margin-right: 8px;
+    }
+    
+    .log-type-info {
+      color: #4d9cf0;
+    }
+    
+    .log-type-success {
+      color: #27c93f;
+    }
+    
+    .log-type-warning {
+      color: #ffbd2e;
+    }
+    
+    .log-type-error {
+      color: #ff5f56;
+    }
+    
+    .log-message {
+      color: #ddd;
+    }
+    
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .btn {
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-light);
+      border: 1px solid var(--primary);
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-dark);
+      color: #111;
+      box-shadow: 0 0 15px rgba(0, 255, 224, 0.5);
+    }
+    
+    .btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.7s;
+    }
+    
+    .btn:hover:before {
+      left: 100%;
+    }
+    
+    .btn-icon {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+    
+    /* Responsive fixes */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .gears-container {
+        transform: scale(0.8);
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Background elements -->
+  <div class="bg-animation">
+    <div class="bg-grid"></div>
+  </div>
+  
   <div class="particles" id="particles"></div>
+  
   <div class="container">
-    <div class="gear-system">
-      <div class="gear gear-main"></div>
-      <div class="gear gear-secondary"></div>
-      <div class="gear gear-tertiary"></div>
+    <div class="header">
+      <h1>Production In Process</h1>
+      <div class="subtitle">Middleware active. Please wait while we handle your request.</div>
     </div>
-    <h1>Production In Process</h1>
-    <div class="status-message" id="statusMessage">Initializing systems...</div>
-    <div class="progress-container">
-      <div class="progress-fill" id="progressFill">
-        <div class="percentage" id="percentage">0%</div>
+    
+    <!-- Animated gears system -->
+    <div class="gears-container">
+      <div class="gear gear-center">
+        <div class="gear-inner"></div>
+        <div class="gear-spoke" style="transform: rotate(0deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(45deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(90deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(135deg)"></div>
       </div>
+      
+      <div class="gear gear-top-right">
+        <div class="gear-inner"></div>
+        <div class="gear-spoke" style="transform: rotate(0deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(60deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(120deg)"></div>
+      </div>
+      
+      <div class="gear gear-bottom-left">
+        <div class="gear-inner"></div>
+        <div class="gear-spoke" style="transform: rotate(0deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(36deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(72deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(108deg)"></div>
+        <div class="gear-spoke" style="transform: rotate(144deg)"></div>
+      </div>
+    </div>
+    
+    <!-- Status indicators with progress bars -->
+    <div class="status-container">
+      <div class="status-item">
+        <div class="status-header">
+          <div class="status-label">Initializing System</div>
+          <div class="status-percentage" id="status1-percent">0%</div>
+        </div>
+        <div class="status-bar">
+          <div class="status-fill" id="status1-fill"></div>
+        </div>
+      </div>
+      
+      <div class="status-item">
+        <div class="status-header">
+          <div class="status-label">Loading Components</div>
+          <div class="status-percentage" id="status2-percent">0%</div>
+        </div>
+        <div class="status-bar">
+          <div class="status-fill" id="status2-fill"></div>
+        </div>
+      </div>
+      
+      <div class="status-item">
+        <div class="status-header">
+          <div class="status-label">Processing Request</div>
+          <div class="status-percentage" id="status3-percent">0%</div>
+        </div>
+        <div class="status-bar">
+          <div class="status-fill" id="status3-fill"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Console log display -->
+    <div class="console-container">
+      <div class="console-header">
+        <div class="console-title">System Logs</div>
+        <div class="console-actions">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="console-content" id="console-content">
+        <!-- Logs will be added here dynamically -->
+      </div>
+    </div>
+    
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <button class="btn" id="restart-btn">
+        <span class="btn-icon">↻</span> Restart Process
+      </button>
+      <button class="btn" id="details-btn">
+        <span class="btn-icon">ℹ</span> View Details
+      </button>
     </div>
   </div>
 
   <script>
-    // Progress simulation
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-      progress = Math.min(progress + Math.random() * 3, 100);
-      document.getElementById('progressFill').style.width = `${progress}%`;
-      document.getElementById('percentage').textContent = `${Math.floor(progress)}%`;
+    // Create random particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 30;
       
-      if (progress >= 100) {
-        clearInterval(progressInterval);
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random position
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        particle.style.left = `${posX}%`;
+        particle.style.top = `${posY}%`;
+        
+        // Random size
+        const size = Math.random() * 3 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random opacity
+        const opacity = Math.random() * 0.5 + 0.1;
+        particle.style.opacity = opacity;
+        
+        // Animation
+        const duration = Math.random() * 20 + 10;
+        particle.style.animation = `float ${duration}s linear infinite`;
+        
+        particlesContainer.appendChild(particle);
+        
+        // Animate particle movement
+        animateParticle(particle);
       }
-    }, 200);
-
-    // Status messages
-    const messages = [
-      "Optimizing modules...",
-      "Compiling assets...",
-      "Initializing middleware...",
-      "Verifying security protocols...",
-      "Loading dependencies...",
-      "Finalizing setup..."
-    ];
-    let messageIndex = 0;
-    setInterval(() => {
-      document.getElementById('statusMessage').textContent = messages[messageIndex];
-      messageIndex = (messageIndex + 1) % messages.length;
-    }, 3000);
-
-    // Generate particles
-    const particles = document.getElementById('particles');
-    for (let i = 0; i < 50; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.width = `${Math.random() * 4 + 2}px`;
-      particle.style.height = particle.style.width;
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.animationDuration = `${Math.random() * 3 + 5}s`;
-      particle.style.animationDelay = `${Math.random() * 5}s`;
-      particles.appendChild(particle);
     }
+    
+    function animateParticle(particle) {
+      const speedX = (Math.random() - 0.5) * 0.5;
+      const speedY = (Math.random() - 0.5) * 0.5;
+      
+      let x = parseFloat(particle.style.left);
+      let y = parseFloat(particle.style.top);
+      
+      function updatePosition() {
+        x += speedX;
+        y += speedY;
+        
+        // Wrap around edges
+        if (x > 100) x = 0;
+        if (x < 0) x = 100;
+        if (y > 100) y = 0;
+        if (y < 0) y = 100;
+        
+        particle.style.left = `${x}%`;
+        particle.style.top = `${y}%`;
+        
+        requestAnimationFrame(updatePosition);
+      }
+      
+      updatePosition();
+    }
+    
+    // Progress bar animations
+    function animateProgressBars() {
+      const bars = [
+        { fill: document.getElementById('status1-fill'), percent: document.getElementById('status1-percent') },
+        { fill: document.getElementById('status2-fill'), percent: document.getElementById('status2-percent') },
+        { fill: document.getElementById('status3-fill'), percent: document.getElementById('status3-percent') }
+      ];
+      
+      const delay = 500; // Delay between progress bar animations
+      
+      bars.forEach((bar, index) => {
+        setTimeout(() => {
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += Math.random() * 3;
+            if (progress > (100 - (index * 5))) {
+              progress = 100 - (index * 5); // Staggered completion
+              clearInterval(interval);
+            }
+            
+            bar.fill.style.width = `${progress}%`;
+            bar.percent.textContent = `${Math.round(progress)}%`;
+          }, 100);
+        }, index * delay);
+      });
+    }
+    
+    // Console log system
+    function addLogEntry(type, message) {
+      const consoleContent = document.getElementById('console-content');
+      const logEntry = document.createElement('div');
+      logEntry.classList.add('log-entry');
+      
+      const now = new Date();
+      const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+      
+      logEntry.innerHTML = `
+        <span class="log-timestamp">[${timestamp}]</span>
+        <span class="log-type log-type-${type}">[${type.toUpperCase()}]</span>
+        <span class="log-message">${message}</span>
+      `;
+      
+      consoleContent.appendChild(logEntry);
+      consoleContent.scrollTop = consoleContent.scrollHeight;
+    }
+    
+    // Display logs in sequence
+    function displaySystemLogs() {
+      const logs = [
+        { delay: 500, type: 'info', message: 'Initializing middleware components...' },
+        { delay: 1500, type: 'info', message: 'Connecting to production servers...' },
+        { delay: 2500, type: 'success', message: 'Connection established.' },
+        { delay: 3500, type: 'info', message: 'Loading environment configuration...' },
+        { delay: 4500, type: 'warning', message: 'Resource utilization at 75%' },
+        { delay: 5500, type: 'info', message: 'Verifying dependencies...' },
+        { delay: 6500, type: 'success', message: 'Dependencies verified.' },
+        { delay: 7500, type: 'info', message: 'Processing request queue...' },
+        { delay: 9000, type: 'info', message: 'Optimizing response pathways...' },
+        { delay: 10500, type: 'success', message: 'System ready. Awaiting further instructions.' }
+      ];
+      
+      logs.forEach(log => {
+        setTimeout(() => {
+          addLogEntry(log.type, log.message);
+        }, log.delay);
+      });
+    }
+    
+    // Initialize everything when page loads
+    window.addEventListener('load', () => {
+      createParticles();
+      animateProgressBars();
+      displaySystemLogs();
+      
+      // Button event handlers
+      document.getElementById('restart-btn').addEventListener('click', () => {
+        document.getElementById('console-content').innerHTML = '';
+        document.querySelectorAll('.status-fill').forEach(fill => {
+          fill.style.width = '0%';
+        });
+        document.querySelectorAll('.status-percentage').forEach(percent => {
+          percent.textContent = '0%';
+        });
+        
+        setTimeout(() => {
+          animateProgressBars();
+          displaySystemLogs();
+          addLogEntry('info', 'System restarted by user.');
+        }, 300);
+      });
+      
+      document.getElementById('details-btn').addEventListener('click', () => {
+        addLogEntry('info', 'Detailed system status requested.');
+        setTimeout(() => {
+          addLogEntry('info', 'CPU: 32%, Memory: 47%, Network: 12.8 Mbps');
+        }, 300);
+      });
+    });
+    
+    // Add CSS for particle float animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes float {
+        0%, 100% { transform: translate(0, 0); }
+        25% { transform: translate(10px, 10px); }
+        50% { transform: translate(0, 20px); }
+        75% { transform: translate(-10px, 10px); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
